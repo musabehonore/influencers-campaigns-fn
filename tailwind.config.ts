@@ -1,4 +1,6 @@
-import type { Config } from "tailwindcss";
+import { Config } from "tailwindcss";
+import { fontFamily} from "tailwindcss/defaultTheme";
+import plugin from 'tailwindcss/plugin';
 
 export default {
   content: [
@@ -9,10 +11,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: '#6D28D9',
+        secondary: '#A78BFA',
+      },
+      fontFamily: {
+        sans: ['Work Sans', ...fontFamily.sans],
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addBase }) {
+      addBase({
+        '*': {
+          transition: 'all 0.3s ease-in-out',
+        },
+      });
+    }),
+  ],
 } satisfies Config;

@@ -2,11 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Styles */
 body {
   font-family: 'Inter', sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
+  background: linear-gradient(to right, #6D28D9, #A78BFA);
+  color: white;
 }
