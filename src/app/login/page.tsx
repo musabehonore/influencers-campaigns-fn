@@ -41,7 +41,7 @@ const Login = () => {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className=" bg-[#d3e2ff] focus:outline-none shadow-lg p-2 mb-4 w-full text-black"
+        className=" bg-[#d3e2ff] w-full focus:outline-none shadow-lg p-2 mb-4  text-black"
       />
       <input
         type="password"
