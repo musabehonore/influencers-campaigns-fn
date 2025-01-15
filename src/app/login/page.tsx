@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { login } from '@/src/utils/api';
 import { toast } from 'react-hot-toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +19,7 @@ const Login = () => {
         toast.success('Login successful!! ');
 
         setTimeout(() => {
-          router.push('/');
+          window.location.href='/';
         }, 3000);
 
       } else {

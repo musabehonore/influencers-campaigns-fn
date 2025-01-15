@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Navbar from '../components/Navbar';
+// import Navbar from '../components/Navbar';
 
 const Home = () => (
   <div>
-    <Navbar />
+    {/* <Navbar /> */}
     <div className="flex flex-col items-center justify-center min-h-screen">
       <motion.h1
         className="text-4xl font-bold"
