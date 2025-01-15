@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { jwtDecode } from 'jwt-decode';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaStar } from 'react-icons/fa';
+import Select, { SingleValue } from 'react-select';
 
 type Campaign = {
   name: string;
@@ -16,7 +17,7 @@ type Campaign = {
     name: string;
     joiningDate: string;
     numberOfPosts: number;
-    posts: Array<{ link: string; status: string }>;
+    posts: Array<{ link: string; status: string; _id: string }>;
   }>;
 };
 
@@ -25,7 +26,7 @@ type Influencer = {
   name: string;
   joiningDate: string;
   numberOfPosts: number;
-  posts: Array<{ link: string; status: string }>;
+  posts: Array<{ link: string; status: string; _id: string }>;
 }
 
 type decodedToken = {
@@ -167,6 +168,45 @@ const CampaignDetails = () => {
     }
   };
 
+
+  const reviewOptions = [
+    { value: 'accepted', label: 'accepted' },
+    { value: 'rejected', label: 'rejected' },
+  ];
+
+  const handlePostReview = async (postId: string, option: SingleValue<{ value: string; label: string }>) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('You must be logged in to perfom this');
+        return;
+      }
+
+      const response = await fetch(
+        `https://influencers-campaigns-bn.onrender.com/campaigns/update-post-status`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ postId: postId, status: option }),
+        }
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(data.message || 'Post status updated successfully!');
+
+      } else {
+        toast.error(data.message || "Failed to update post's status");
+      }
+    } catch (error) {
+      console.error('Error updating post status:', error);
+      toast.error('An error occurred updating post status');
+    }
+  };
+
   if (loading) {
     return <p className="text-center mt-20">Loading campaign...</p>;
   }
@@ -216,16 +256,24 @@ const CampaignDetails = () => {
                     <strong>Number of Posts </strong> {influencer.numberOfPosts}
                   </p>
                   {influencer.posts.map((post, postIndex) => (
-                    <li key={postIndex} className="mb-2">
+                    <li key={postIndex} className="mb-2 flex flex-row">
+                      <FaStar size={20} color="#A78BFA" style={{ marginRight: '10px' }} />
                       <a
                         href={post.link}
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
+                        className="text-blue-500 underline overflow-hidden"
                       >
                         {post.link}
-                      </a>{' '}
-                      - <span className="text-gray-600 bg-lime-200 p-1">{post.status}</span>
+                      </a> -
+                      {/* <span className="text-gray-600 bg-lime-200 p-1">
+                        {post.status}
+                      </span> */}
+                      <Select
+                        options={reviewOptions}
+                        placeholder={post.status}
+                        onChange={option => handlePostReview(post._id, option)}
+                      ></Select>
+
                     </li>
                   ))}
                 </div>

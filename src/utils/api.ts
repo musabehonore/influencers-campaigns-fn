@@ -16,5 +16,3 @@ export const getJoinedCampaigns = (token: string) =>
   API.get('/campaigns/joined', {
     headers: { Authorization: `Bearer ${token}` },
   });
-
-// More API calls
