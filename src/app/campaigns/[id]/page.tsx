@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { jwtDecode } from 'jwt-decode';
+import { FaUser } from 'react-icons/fa';
 
 type Campaign = {
   name: string;
@@ -19,7 +20,7 @@ type Campaign = {
   }>;
 };
 
-type Influencer = {  
+type Influencer = {
   _id: string;
   name: string;
   joiningDate: string;
@@ -194,38 +195,49 @@ const CampaignDetails = () => {
         {role === 'manager' ? (
           <div>
             <h2 className="text-xl font-bold mb-2">Influencers who joined this campaign</h2>
-            {campaign.influencers.map((influencer, index) => (
-              <div key={index} className="mb-4">
-                <p>
-                  <strong>Name </strong> {influencer.name}
+            {campaign.influencers.length === 0 ? (
+              <div className=" flex flex-row gap-2">
+                <FaUser size={20} />
+                <p className="text-gray-600">
+                  Influencers are yet to join the campaign.
                 </p>
-                <p className="w-[223px] whitespace-nowrap overflow-hidden">
-                  <strong>Date joined </strong> {influencer.joiningDate}
-                </p>
-                <p>
-                  <strong>Number of Posts </strong> {influencer.numberOfPosts}
-                </p>
-                {influencer.posts.map((post, index) => (
-                      <li key={index} className="mb-2">
-                        <a
-                          href={post.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline"
-                        >
-                          {post.link}
-                        </a>{' '}
-                        - <span className="text-gray-600 bg-lime-200 p-1">{post.status}</span>
-                      </li>
-                    ))}
               </div>
-            ))}
+
+            ) : (
+              campaign.influencers.map((influencer, index) => (
+                <div key={index} className="mb-4">
+                  <p>
+                    <strong>Name </strong> {influencer.name}
+                  </p>
+                  <p className="w-[223px] whitespace-nowrap overflow-hidden">
+                    <strong>Date joined </strong> {influencer.joiningDate}
+                  </p>
+                  <p>
+                    <strong>Number of Posts </strong> {influencer.numberOfPosts}
+                  </p>
+                  {influencer.posts.map((post, postIndex) => (
+                    <li key={postIndex} className="mb-2">
+                      <a
+                        href={post.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 underline"
+                      >
+                        {post.link}
+                      </a>{' '}
+                      - <span className="text-gray-600 bg-lime-200 p-1">{post.status}</span>
+                    </li>
+                  ))}
+                </div>
+              ))
+            )}
           </div>
         ) : (
           <p className="text-gray-600 mb-4">
             Join this campaign to contribute and see more details!
           </p>
         )}
+
 
         {role === 'influencer' && (
           <div className="mt-6">
@@ -247,7 +259,7 @@ const CampaignDetails = () => {
                         - <span className="text-gray-600 bg-lime-200 p-1">{post.status}</span>
                       </li>
                     ))}
-                  </ul>                  
+                  </ul>
                 ) : (
                   <p className="text-gray-600">You have not submitted any posts yet.</p>
                 )}

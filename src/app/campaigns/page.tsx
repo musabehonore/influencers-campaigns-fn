@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { jwtDecode } from 'jwt-decode';
 
 type Campaign = {
   _id: string;
@@ -23,6 +24,7 @@ const Campaigns = () => {
   const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [joinedCampaignIds, setJoinedCampaignIds] = useState<string[]>([]);
+  const [isManager, setIsManager] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +35,6 @@ const Campaigns = () => {
 
         if (data.success) {
           setCampaigns(data.data);
-          // toast.success(data.message || 'Campaigns loaded!');
         } else {
           toast.error(data.message || 'Failed to fetch campaigns.');
         }
@@ -69,8 +70,17 @@ const Campaigns = () => {
       }
     };
 
+    const checkManagerRole = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decoded: { role: string } = jwtDecode(token);
+        setIsManager(decoded.role === 'manager');
+      }
+    };
+
     fetchCampaigns();
     fetchJoinedCampaigns();
+    checkManagerRole();
   }, []);
 
   if (loading) {
@@ -85,9 +95,14 @@ const Campaigns = () => {
     await router.push(`/campaigns/id?campaignId=${campaignId}`);
   };
 
+  const handleMyCampaignsClick = async () => {
+    await router.push('/campaigns/owned');
+  };
+
   return (
     <div className="container mx-auto mt-12 p-6">
       <h1 className="text-4xl font-bold text-center mb-8">All Campaigns</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {campaigns.map((campaign) => (
           <div key={campaign._id} className="shadow-lg p-4 rounded bg-white relative">
@@ -114,6 +129,17 @@ const Campaigns = () => {
             </button>
           </div>
         ))}
+        
+      {isManager && (
+        <div className="text-center mb-6">
+          <button
+            onClick={handleMyCampaignsClick}
+            className=" active:bg-[#7ca8f9] bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            My Campaigns
+          </button>
+        </div>
+      )}
       </div>
     </div>
   );
